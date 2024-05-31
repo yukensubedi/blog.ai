@@ -31,7 +31,6 @@ def test(request):
         
         form_data_json = json.dumps(form_data)
         data = json.loads(form_data_json)
-        print(data)
         
     return HttpResponse(form_data_json)
        
