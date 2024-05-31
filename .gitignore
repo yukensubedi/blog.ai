@@ -6,6 +6,7 @@
 media/uploads/*
 templates/static/*
 venv
+env
 *.pyc
 *.pyc*.pyc*.pyc*.pyc*.pyc*.pyc*.pyc
 
