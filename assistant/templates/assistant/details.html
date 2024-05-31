@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static   %}
+{% load assistant_tags %}
+
+{% block head_title %} Details {% endblock %}
+{% block breadcrumb%}
+{% for item in histories_with_blog %}
+        {% with history=item.history %}
+<h2 class="text-title-md2 font-bold text-black dark:text-white">
+    <!-- Details --> {% if forloop.first %}
+            {{ history.title | title}}
+            {% endif %}
+</h2>
+{% endwith %}
+ {% endfor %}
+<nav>
+    <ol class="flex items-center gap-2">
+        <li>
+            <a class="font-medium" href="{% url 'generate_blog' %}">Blog /</a>
+        </li>
+        <li class="font-medium text-primary">Details</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+
+<!-- ====== Content Section starts -->
+
+
+{% for item in histories_with_blog %}
+    {% with history=item.history %}
+    
+    <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        
+        <div class="w-full border-stroke dark:border-strokedark">
+            
+            <div class="w-full p-4">
+                <div class="flex gap-16">
+                    <!-- Left side with your content -->
+                    <div class="w-full">
+                        <form method="post">
+                            {% csrf_token %}
+                          
+                        <div id="content">
+                            <!-- Your content goes here -->
+                            {{ history.body | safe }}
+                          
+                            
+                            <input type="hidden" name="id" value="{{ history.id }}">
+
+                                                
+                        </div>
+                        
+                           
+
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    {% if not item.featured_image %}
+                                    <input type="checkbox" value="featured_image" name="featured_image"
+                                    class="px-4 py-2 rounded-lg border border-primary bg-primary font-medium text-white transition hover:bg-opacity-90" />
+                                    <label for="my_checkbox">Generate Featured Image</label>
+                                    {% endif %}
+                            
+                                    {% if item.has_blog %}
+                                        <input type="submit" value="Update" name="Update"
+                                            class="px-4 py-2 rounded-lg border border-primary bg-primary font-medium text-white transition hover:bg-opacity-90" />
+                                        
+                                       
+                                    {% else %}
+                                    
+                                    
+
+                                        <input type="submit" value="Save" name="Save"
+                                            class="px-4 py-2 rounded-lg border border-primary bg-primary font-medium text-white transition hover:bg-opacity-90" />
+                                    {% endif %}
+                                    <input type="submit" value="Generate Image" name="Image"
+                                    class="px-4 py-2 rounded-lg border border-primary bg-primary font-medium text-white transition hover:bg-opacity-90" />
+                                    
+                                </div>                                
+                              
+                               
+                               
+
+
+                            </div>
+                        
+                        <a href="{% url 'edit' history.slug %}">
+                            <button type="button" name="action" value="edit" class="px-4 py-2 rounded-lg border border-secondary bg-secondary font-medium text-white transition hover:bg-opacity-90"
+                            >Edit</button>
+
+                        </a>
+
+                        
+
+
+
+                    
+                </form>
+            </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endwith %}
+{% endfor %}
+    <input type="submit" value="Regenerate" name="Regenerate"
+    class="px-4 py-2 rounded-lg border border-primary bg-primary font-medium text-white transition hover:bg-opacity-90" />
+</form>
+    <br>
+    <br>
+    
+
+<!-- ====== Content Section end -->
+
+
+
+
+{% endblock content %}

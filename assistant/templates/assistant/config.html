@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head_title %} Generate {% endblock %}
+{% block breadcrumb%}
+<h2 class="text-title-md2 font-bold text-black dark:text-white">
+    Blog Generation Settings
+  </h2>
+
+  <nav>
+    <ol class="flex items-center gap-2">
+      <li>
+        <a class="font-medium" href="index.html">Dashboard /</a>
+      </li>
+      <li class="font-medium text-primary">Blog</li>
+    </ol>
+  </nav>
+{% endblock%}
+{% block content %}
+
+
+   
+
+    <!-- ====== Forms Section Start -->
+    <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <div class="flex flex-wrap items-center">
+          <div class="w-full border-stroke dark:border-strokedark xl:w-1/2 xl:border-l-2">
+            <div class="w-full p-4 sm:p-12.5 xl:p-17.5">
+              <h1 class="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
+                Set Generation Settings
+              </h1>
+            
+              <form method="post" id="blogTopicForm" class="w-full"> <!-- Added class "w-full" here -->
+                {% csrf_token %}
+      
+                <div class="mb-4">
+                  <label class="mb-2.5 block font-medium text-black dark:text-white">Temperature</label>
+                  <div class="relative">
+                    {{form.temperature}}
+                    {% if form.temperature.errors %}
+                    <div class="absolute right-4 top-4 text-red-500">
+                      <div class="text-danger">{{form.temperature.errors}}</div>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+      
+                <div class="mb-4">
+                  <label class="mb-2.5 block font-medium text-black dark:text-white">Top p</label>
+                  <div class="relative">
+                    {{form.top_p}}
+                    {% if form.top_p.errors %}
+                    <div class="absolute right-4 top-4 text-red-500">
+                      <div class="text-danger">{{form.top_p.errors}}</div>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+      
+                <div class="mb-4">
+                  <label class="mb-2.5 block font-medium text-black dark:text-white">Top K</label>
+                  <div class="relative">
+                    {{form.top_k}}
+                    {% if form.top_k.errors %}
+                    <div class="absolute right-4 top-4 text-red-500">
+                      <div class="text-danger">{{form.top_k.errors}}</div>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <div class="mb-4">
+                  <label class="mb-2.5 block font-medium text-black dark:text-white">Max Output Tokens</label>
+                  <div class="relative">
+                    {{form.max_output_tokens}}
+                    {% if form.max_output_tokens.errors %}
+                    <div class="absolute right-4 top-4 text-red-500">
+                      <div class="text-danger">{{form.max_output_tokens.errors}}</div>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+      
+                {% if form.non_field_errors %}
+                <div class="mb-5">
+                  {% for error in form.non_field_errors %}
+                  <div class="text-danger">{{error}}</div>
+                  {% endfor %}
+                </div>
+                {% endif %}
+      
+                <div class="mb-5">
+                  <input type="submit" value="Save" class="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white transition hover:bg-opacity-90" />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    <!-- ====== Forms Section End -->
+  
+
+ 
+  
+
+{% endblock content %}

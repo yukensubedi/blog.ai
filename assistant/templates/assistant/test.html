@@ -1,0 +1,951 @@
+{% extends 'base.html' %}
+{% load static   %}
+{% load assistant_tags %}
+
+{% block head_title %} Edit {% endblock %}
+{% block breadcrumb%}
+
+<h2 class="text-title-md2 font-bold text-black dark:text-white">
+    {{ blog.title }} | Update
+</h2>
+
+<nav>
+    <ol class="flex items-center gap-2">
+        <li>
+            <a class="font-medium" href="{% url 'generate_blog' %}">Blog /</a>
+        </li>
+        <li class="font-medium text-primary">Edit</li>
+    </ol>
+</nav>
+{% endblock%}
+{% block content %}
+<!-- <div x-data="{ isOpen: false }">
+
+    <button 
+        @click="isOpen = true"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Open Popup
+    </button>
+
+    <div 
+        x-show="isOpen"
+        @click.away="isOpen = false"
+        class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+        <div class="bg-white rounded-lg p-8 max-w-sm w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold">Popup</h2>
+                <button @click="isOpen = false" class="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p>This is a popup. You can put any content here.</p>
+        </div>
+    </div>
+
+</div> -->
+
+<!-- <div x-data="{ isOpen: false }">
+
+    <button 
+        @click="isOpen = true"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Open Popup
+    </button>
+
+    <div 
+        x-show="isOpen"
+        class="fixed inset-0 overflow-hidden z-[999999]">
+        <div class="absolute inset-0 overflow-hidden">
+            <div x-show="isOpen"
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="translate-x-full"
+                 x-transition:enter-end="translate-x-0"
+                 x-transition:leave="transition ease-in duration-300 transform"
+                 x-transition:leave-start="translate-x-0"
+                 x-transition:leave-end="translate-x-full"
+                 class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 mt-17">
+                <div class="pointer-events-auto relative w-screen max-w-md">
+                    <div class="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
+                        <button @click="isOpen = false" type="button" class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+                            <span class="sr-only">Close panel</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                              </svg>
+                        </button>
+                    </div>
+                    <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl mt-4">
+                        <div class="px-4 sm:px-6">
+                            <h2 class="text-lg font-semibold leading-6 text-gray-900" id="2">Panel title</h2>
+                        </div>
+                        <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                            <p class="text-gray-700">Your content goes here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div @click="isOpen = false" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+    </div>
+
+</div> -->
+
+<div x-data="{ isOpen: false, isSettingsOpen: false, imageUrls: [], selectedImages: [], toggleImageSelection: toggleImageSelection, uploadImage: uploadImage, resetSelectedImages: resetSelectedImages }" x-init="fetchImages">
+    <button 
+        @click="isOpen = true"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Open Popup
+    </button>
+    <button 
+        @click="isSettingsOpen = true"
+        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+        Settings
+    </button>
+
+    <div 
+        x-show="isOpen"
+        @click.away="isOpen = false"
+        class="fixed inset-0 overflow-hidden z-[999999]">
+        <div class="absolute inset-0 overflow-hidden">
+            <div x-show="isOpen"
+                x-transition:enter="transition ease-out duration-300 transform"
+                x-transition:enter-start="translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave="transition ease-in duration-300 transform"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="translate-x-full"
+                class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 mt-17">
+                <div class="pointer-events-auto relative w-screen max-w-md">
+                    <div class="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
+                        <button @click="isOpen = false" type="button" class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+                            <span class="absolute -inset-2.5"></span>
+                            <span class="sr-only">Close panel</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl mt-4">
+                        <div class="px-4 sm:px-6">
+                            <h2 class="text-lg font-semibold leading-6 text-gray-900" id="2">Media Library</h2>
+                        </div>
+                        <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                            <template x-if="imageUrls.length === 0">
+                                <p class="text-gray-700">Loading images...</p>
+                            </template>
+                            <template x-if="imageUrls.length > 0">
+                                <div class="grid grid-cols-3 gap-4">
+                                    <template x-for="(imageUrl, index) in imageUrls" :key="index">
+                                        <img :src="imageUrl" 
+                                             :class="{ 'opacity-50 border-4 border-blue-500': selectedImages.includes(imageUrl) }" 
+                                             alt="Image" 
+                                             class="rounded-lg shadow-md cursor-pointer"
+                                             @click="toggleImageSelection(index)">
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="px-4 sm:px-6 mt-4">
+                            <button @click="uploadImage;" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+    <div 
+        x-show="isSettingsOpen"
+        @click.away="isSettingsOpen = false"
+        class="fixed inset-0 overflow-hidden z-[999999]">
+        <div class="absolute inset-0 overflow-hidden">
+            <div x-show="isSettingsOpen"
+                x-transition:enter="transition ease-out duration-300 transform"
+                x-transition:enter-start="translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave="transition ease-in duration-300 transform"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="translate-x-full"
+                class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 mt-17">
+                <div class="pointer-events-auto relative w-screen max-w-md">
+                    <div class="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
+                        <button @click="isSettingsOpen = false" type="button" class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+                            <span class="absolute -inset-2.5"></span>
+                            <span class="sr-only">Close panel</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl mt-4">
+                        <div class="px-4 sm:px-6">
+                            <h2 class="text-lg font-semibold leading-6 text-gray-900" id="slide-over-title2">Settings</h2>
+                        </div>
+                        <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                            <!-- Add your form here -->
+                            <form>
+                                <!-- Form fields go here -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function fetchImages() {
+            fetch('/files/get_images/')
+                .then(response => response.json())
+                .then(data => {
+                    this.imageUrls = data.image_urls;
+                })
+                .catch(error => console.error('Error fetching images:', error));
+        }
+
+        function toggleImageSelection(index) {
+            const imageUrl = this.imageUrls[index];
+            const selectedIndex = this.selectedImages.indexOf(imageUrl);
+            if (selectedIndex === -1) {
+                //  add selected images to the selected images array
+                this.selectedImages.push(imageUrl);
+            } else {
+                // remove selected images from the selected images array
+                this.selectedImages.splice(selectedIndex, 1);
+            }
+        }
+
+        function uploadImage() {
+            this.isOpen = false;
+            console.log(this.selectedImages);
+            this.resetSelectedImages();
+        }
+
+        function resetSelectedImages() {
+            this.selectedImages = [];
+        }
+    </script>
+</div>
+
+
+<div x-data="{ isOpen: false }" class="relative">
+    <button @click="isOpen = !isOpen" type="button" class="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900" aria-expanded="false"
+        data-twe-toggle="tooltip"
+        data-twe-placement="top"
+        data-twe-ripple-init
+        data-twe-ripple-color="light"
+        title="Settings">
+        <span class="relative">
+            <svg :class="{ 'transform rotate-180': isOpen, '': !isOpen }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 transition-transform">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 0 1 1.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.894.149c-.424.07-.764.383-.929.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 0 1-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 0 1-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 0 1 .12-1.45l.773-.773a1.125 1.125 0 0 1 1.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+        </span>
+    </button>
+
+    <!-- overlay for reducing opacity-->
+    <div x-show="isOpen" @click.away="isOpen = false" class="fixed inset-0 bg-black opacity-50 z-40" style="transition: opacity 0.3s ease;"></div>
+
+    <div x-show="isOpen" @click="isOpen = false" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+        <div class="w-screen max-w-md flex-auto overflow-hidden rounded-lg bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5">
+            <!-- Close icon -->
+            <button @click.stop class="absolute top-0 right-0 m-3 text-gray-500 hover:text-gray-700 focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 1a9 9 0 100 18 9 9 0 000-18zm4.95 4.05a.75.75 0 01.766.027l3.5 2.25a.75.75 0 010 1.262l-3.5 2.25A.75.75 0 018 12.25v-4.5a.75.75 0 01.39-.658z" clip-rule="evenodd" />
+                </svg>
+            </button>
+
+            <!-- Dropdown content -->
+            <div class="group relative flex gap-x-6 rounded-lg p-4 hover:bg-gray-50">
+                <div class="mt-1 flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                    <svg class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                    </svg>
+                </div>
+                <div>
+                    <a href="#" class="font-semibold text-gray-900">
+                        Analytics
+                        <span class="absolute inset-0"></span>
+                    </a>
+                    <p class="mt-1 text-gray-600">Get a better understanding of your traffic</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+                <a href="#" class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100">
+                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm6.39-2.908a.75.75 0 01.766.027l3.5 2.25a.75.75 0 010 1.262l-3.5 2.25A.75.75 0 018 12.25v-4.5a.75.75 0 01.39-.658z" clip-rule="evenodd" />
+                    </svg>
+                    Watch demo
+                </a>
+                <a href="#" class="flex items-center justify-center gap-x-2.5 p-3 font-semibold text-gray-900 hover:bg-gray-100">
+                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z" clip-rule="evenodd" />
+                    </svg>
+                    Contact sales
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+  
+   <div x-data="{ open: false }" class="relative inline-block text-left">
+        <div>
+            <button @click="open = !open" type="button"
+                class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                id="menu-button" :aria-expanded="open ? 'true' : 'false'" aria-haspopup="true">
+                Options
+                <svg x-bind:class="{ 'transform rotate-180': open, 'text-gray-400': !open }"
+                    class="-mr-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                        clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+
+        <div x-show="open" @click.away="open = false"
+            class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+            <div class="py-1" role="none">
+                <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                    id="menu-item-0">Edit</a>
+                <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                    id="menu-item-1">Duplicate</a>
+            </div>
+            <div class="py-1" role="none">
+                <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                    id="menu-item-2">Archive</a>
+                <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                    id="menu-item-3">Move</a>
+            </div>
+            <div class="py-1" role="none">
+                <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                    id="menu-item-4">Share</a>
+                <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                    id="menu-item-5">Add to favorites</a>
+            </div>
+            <div class="py-1" role="none">
+                <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                    id="menu-item-6">Delete</a>
+            </div>
+        </div>
+    </div>
+
+
+
+  
+
+
+<!-- <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div id="dropZone" style="min-height: 200px; border: 2px dashed #ccc; border-radius: 4px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+        <p style="color: #4a5568; font-size: 18px;">Drag & Drop your image here</p>
+    </div>
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+
+dropZone.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    dropZone.style.border = '2px dashed #4299e1';
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.style.border = '2px dashed #ccc';
+});
+
+dropZone.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dropZone.style.border = '2px dashed #ccc';
+
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+        const formData = new FormData();
+        formData.append('image', files[0]);
+
+        // Fetch CSRF token from cookies
+        const csrftoken = getCookie('csrftoken');
+        formData.append('csrfmiddlewaretoken', csrftoken);
+
+        fetch('/files/upload_image/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken  // Include CSRF token in headers as well
+            },
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Image uploaded successfully!');
+            } else {
+                alert('Failed to upload image!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to upload image!');
+        });
+    }
+});
+
+// Function to get CSRF token from cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+</script> -->
+
+
+
+<div x-data="{ isOpen: false }" @click.away="isOpen = false" class="relative">
+    <!-- Button/Icon -->
+    <button @click="isOpen = !isOpen" class="flex items-center justify-center bg-blue-500 text-white rounded-full w-12 h-12 focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+    </button>
+    
+    <!-- Popup -->
+    <div x-show="isOpen" class="absolute z-10 bg-white shadow-md rounded-md mt-2 w-48">
+        <ul>
+            <li class="py-2 px-4 cursor-pointer hover:bg-gray-100">Option 1</li>
+            <li class="py-2 px-4 cursor-pointer hover:bg-gray-100">Option 2</li>
+            <li class="py-2 px-4 cursor-pointer hover:bg-gray-100">Option 3</li>
+        </ul>
+    </div>
+</div>
+  <br><br><br>
+
+
+  
+  <!-- <div x-data="{ isOpen: true, timerWidth: 100 }" x-init="setTimeout(() => { isOpen = false; }, 5000); setInterval(() => { timerWidth -= 2; }, 50)">
+    <div x-show="isOpen"
+        class="fixed bottom-0 right-0 m-4 bg-green-500 text-white p-4 rounded shadow-lg relative">
+        <p>This is a message box!</p>
+        <div class="h-2 bg-gray-200 mt-2 rounded overflow-hidden">
+            <div x-bind:style="{ width: timerWidth + '%', transition: 'width 0.1s linear' }"
+                class="h-full bg-blue-500 rounded"></div>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"
+            x-bind:style="{ width: (100 - timerWidth) + '%' }"></div>
+    </div>
+</div> -->
+
+<p>
+   
+    <a
+      href="#"
+      class="text-green-400 dark:text-primary-400"
+      data-twe-toggle="tooltip"
+      data-twe-html="true"
+      title="Hi! I'm tooltip
+         my name is yuken"
+     >
+     
+      tooltip
+      
+      </a
+    >
+  </p>
+
+
+<!-- component -->
+<div class="overflow-hidden rounded-lg border border-gray-200 shadow-md m-5">
+    <table class="w-full border-collapse bg-white text-left text-sm text-gray-500">
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-4 font-medium text-gray-900">Name</th>
+          <th scope="col" class="px-6 py-4 font-medium text-gray-900">State</th>
+          <th scope="col" class="px-6 py-4 font-medium text-gray-900">Role</th>
+          <th scope="col" class="px-6 py-4 font-medium text-gray-900">Team</th>
+          <th scope="col" class="px-6 py-4 font-medium text-gray-900"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100 border-t border-gray-100">
+        <tr class="hover:bg-gray-50">
+          <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
+            <div class="relative h-10 w-10">
+              <img
+                class="h-full w-full rounded-full object-cover object-center"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+              />
+              <span class="absolute right-0 bottom-0 h-2 w-2 rounded-full bg-green-400 ring ring-white"></span>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-700">Steven Jobs</div>
+              <div class="text-gray-400">jobs@sailboatui.com</div>
+            </div>
+          </th>
+          <td class="px-6 py-4">
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+              Active
+            </span>
+          </td>
+          <td class="px-6 py-4">Product Designer</td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+              >
+                Design
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600"
+              >
+                Product
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-600"
+              >
+                Develop
+              </span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex justify-end gap-4">
+              <a x-data="{ tooltip: 'Delete' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  />
+                </svg>
+              </a>
+              <a x-data="{ tooltip: 'Edite' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                  />
+                </svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
+            <div class="relative h-10 w-10">
+              <img
+                class="h-full w-full rounded-full object-cover object-center"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+              />
+              <span class="absolute right-0 bottom-0 h-2 w-2 rounded-full bg-green-400 ring ring-white"></span>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-700">Steven Jobs</div>
+              <div class="text-gray-400">jobs@sailboatui.com</div>
+            </div>
+          </th>
+          <td class="px-6 py-4">
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+              Active
+            </span>
+          </td>
+          <td class="px-6 py-4">Product Designer</td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+              >
+                Design
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600"
+              >
+                Product
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-600"
+              >
+                Develop
+              </span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex justify-end gap-4">
+              <a x-data="{ tooltip: 'Delete' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  />
+                </svg>
+              </a>
+              <a x-data="{ tooltip: 'Edite' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                  />
+                </svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
+            <div class="relative h-10 w-10">
+              <img
+                class="h-full w-full rounded-full object-cover object-center"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+              />
+              <span class="absolute right-0 bottom-0 h-2 w-2 rounded-full bg-green-400 ring ring-white"></span>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-700">Steven Jobs</div>
+              <div class="text-gray-400">jobs@sailboatui.com</div>
+            </div>
+          </th>
+          <td class="px-6 py-4">
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+              Active
+            </span>
+          </td>
+          <td class="px-6 py-4">Product Designer</td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+              >
+                Design
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600"
+              >
+                Product
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-600"
+              >
+                Develop
+              </span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex justify-end gap-4">
+              <a x-data="{ tooltip: 'Delete' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  />
+                </svg>
+              </a>
+              <a x-data="{ tooltip: 'Edite' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                  />
+                </svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
+            <div class="relative h-10 w-10">
+              <img
+                class="h-full w-full rounded-full object-cover object-center"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+              />
+              <span class="absolute right-0 bottom-0 h-2 w-2 rounded-full bg-green-400 ring ring-white"></span>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-700">Steven Jobs</div>
+              <div class="text-gray-400">jobs@sailboatui.com</div>
+            </div>
+          </th>
+          <td class="px-6 py-4">
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+              Active
+            </span>
+          </td>
+          <td class="px-6 py-4">Product Designer</td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+              >
+                Design
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600"
+              >
+                Product
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-600"
+              >
+                Develop
+              </span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex justify-end gap-4">
+              <a x-data="{ tooltip: 'Delete' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  />
+                </svg>
+              </a>
+              <a x-data="{ tooltip: 'Edite' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                  />
+                </svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        <tr class="hover:bg-gray-50">
+          <th class="flex gap-3 px-6 py-4 font-normal text-gray-900">
+            <div class="relative h-10 w-10">
+              <img
+                class="h-full w-full rounded-full object-cover object-center"
+                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt=""
+              />
+              <span class="absolute right-0 bottom-0 h-2 w-2 rounded-full bg-green-400 ring ring-white"></span>
+            </div>
+            <div class="text-sm">
+              <div class="font-medium text-gray-700">Steven Jobs</div>
+              <div class="text-gray-400">jobs@sailboatui.com</div>
+            </div>
+          </th>
+          <td class="px-6 py-4">
+            <span
+              class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-semibold text-green-600"
+            >
+              <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+              Active
+            </span>
+          </td>
+          <td class="px-6 py-4">Product Designer</td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-600"
+              >
+                Design
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600"
+              >
+                Product
+              </span>
+              <span
+                class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2 py-1 text-xs font-semibold text-violet-600"
+              >
+                Develop
+              </span>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex justify-end gap-4">
+              <a x-data="{ tooltip: 'Delete' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  />
+                </svg>
+              </a>
+              <a x-data="{ tooltip: 'Edite' }" href="#">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6"
+                  x-tooltip="tooltip"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+                  />
+                </svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <h1>Token Consumption Detail</h1>
+    <p>User: {{ token_consumption.user }}</p>
+    <p>Input Tokens Used: {{ token_consumption.input_token }}</p>
+    <p>Output Tokens Used: {{ token_consumption.output_token }}</p>
+    <p>Images Generated: {{ token_consumption.image }}</p>
+    <p>Model Used: {{ token_consumption.model }}</p>
+
+   
+     <!-- Display content object details if available -->
+     {% if token_consumption.content_object %}
+     <h2>Content Object</h2>
+     <a href="{% url 'details' token_consumption.content_object.id %}"><p>Type: {{ token_consumption.content_object }}</p></a>
+     
+     <!-- Add more details specific to the content object as needed -->
+     {% endif %}
+
+
+    <!-- component -->
+   
+    {% with image_url="http://127.0.0.1:8000/media/filemanager/images/8d2b3c55-dcf3-477e-a18c-6ee08f5bf24c_logo1.png" %}
+    {{ image_url | image_tag }}
+      {% endwith %}
+
+      <!-- tags read and render in frontend part -->
+      <form method="post">
+        {% csrf_token %}
+        <textarea id="message" name="message" rows="4" cols="50" required></textarea><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+   
+    <div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div class="sm:mx-auto sm:w-full sm:max-w-md">
+          <img class="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow">
+          <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              Thank you for your submission!
+          </h2>
+          <p class="mt-2 text-center text-sm text-gray-600">
+              We appreciate your feedback.
+          </p>
+      </div>
+      <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+          <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+              <div class="mt-6">
+                  <p class="text-sm text-center text-gray-600">
+                      You can <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">contact us</a> if you have any questions or concerns.
+                  </p>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+  
+{% endblock content %}
