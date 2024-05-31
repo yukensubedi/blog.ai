@@ -27,7 +27,7 @@ def upload_image(request):
 
 class ImageListView(ListView):
     model = Images
-    # paginate_by = 5
+    
     template_name = "filemanager/test.html"
 
     
