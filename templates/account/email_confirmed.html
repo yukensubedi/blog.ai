@@ -1,0 +1,12 @@
+{% extends "base_full.html" %} 
+
+{% block content %}
+<div class="h-screen flex flex-col justify-center items-center">
+    <p class="text-center text-lg"><b>{% with email=confirmation.email_address.email %}You have confirmed {{ email }}{% endwith %}</b></p>
+    <div class="text-center mt-8"> 
+        <button class="bg-primary w-40 px-4 py-2 text-center font-medium text-white hover:bg-opacity-90 rounded-md">
+           <a href="{{ success_url }}">Go Back</a> 
+        </button>
+    </div>
+</div>
+{% endblock content %}
