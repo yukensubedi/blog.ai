@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block head_title %} Logout Confirm {% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card card-body">
+            <p class="text-center">Are you sure you want to log out?</p>
+            <form method="POST" action="{% url 'account_logout' %}" autocapitalize="off" class="reg-page" novalidate>
+                {% csrf_token %}
+                <div class="text-center"> 
+                    <button type="submit" class="bg-primary w-40 px-4 py-2 text-center font-medium text-white hover:bg-opacity-90 rounded-md">
+                        Logout
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+ {% endblock %}

@@ -5,8 +5,8 @@
 
 media/uploads/*
 templates/static/*
-venv
-env
+venv/
+env/
 *.pyc
 *.pyc*.pyc*.pyc*.pyc*.pyc*.pyc*.pyc
 

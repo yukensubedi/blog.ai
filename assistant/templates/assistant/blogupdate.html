@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+{% load static   %}
+{% load assistant_tags %}
+
+{% block head_title %} Edit {% endblock %}
+{% block breadcrumb%}
+
+<h2 class="text-title-md2 font-bold text-black dark:text-white">
+    {{ blog.title }} | Update
+</h2>
+
+<nav>
+    <ol class="flex items-center gap-2">
+        <li>
+            <a class="font-medium" href="{% url 'generate_blog' %}">Blog /</a>
+        </li>
+        <li class="font-medium text-primary">Edit</li>
+    </ol>
+</nav>
+{% endblock%}
+{% block content %}
+
+
+<div class="relative" x-data="{ isOpen: false, isSettingsOpen: false, isUploading: false, imageUrls: [], selectedImages: [], toggleImageSelection: toggleImageSelection, uploadImage: uploadImage, resetSelectedImages: resetSelectedImages, closePopup: closePopup }" x-init="fetchImages">
+  <form method="post" class="px-3" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="absolute top-0 right-0 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-25">
+          <div x-data="{ open: false }" class="relative inline-block text-left justify-end">
+              <div >
+                  <button @click="open = !open" type="button" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button" :aria-expanded="open ? 'true' : 'false'" aria-haspopup="true">
+                      Options
+                      <svg x-bind:class="{ 'transform rotate-180': open, 'text-gray-400': !open }" class="-mr-1 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                      </svg>
+                  </button>
+              </div>
+              <div x-show="open" @click.away="open = false" class="absolute right-0 z-10 mt-2 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                  <div class="py-2" role="none">
+                      <a href="#" @click="isOpen = true" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Media</a>
+                      <a href="#" @click="isSettingsOpen = true" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Settings</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <br>
+      <br>
+      <!-- <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-4">
+        {{ form.title }}
+        
+    </div> -->
+      <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-4">
+          <!-- CKEditor5 Text Editor -->
+          {{ form.title }}
+          {{ form.body }}
+          <div class="mt-4 flex">
+              <input type="submit" value="Save" class="px-4 py-2 rounded-lg border border-primary bg-primary font-medium text-white transition hover:bg-opacity-90 mr-4" name="save_body" />
+              <a href="{% url 'list' %}">
+                  <input type="button" value="Cancel" class="px-4 py-2 rounded-lg border border-warning bg-warning font-medium text-white transition hover:bg-opacity-90" />
+              </a>
+          </div>
+      </div>
+
+      <!-- Images Section  -->
+      <div 
+      x-show="isOpen"
+      @click.away="closePopup"
+      @drop.prevent="handleDrop"
+      @dragover.prevent
+      class="fixed inset-0 overflow-hidden z-[999999]"
+  >
+    <!-- Overlay -->
+    <div 
+    x-show="isUploading"
+    class="fixed inset-0 bg-graydark opacity-50 z-40 transition-opacity"
+    > 
+    <div class="flex items-center justify-center h-screen">
+        <div class="text-center"> 
+            <div id="progress-bar" class="bg-white rounded-sm" style="height: 3px; width: 20%;"></div>   
+   
+            <p id="upload-percentage" class="text-lg text-white font-semibold text-gray-900">  </p>
+        </div>
+    </div>
+    
+    </div>
+      <div class="absolute inset-0 overflow-hidden">
+          <div 
+              x-show="isOpen"
+              x-transition:enter="transition ease-out duration-300 transform"
+              x-transition:enter-start="translate-x-full"
+              x-transition:enter-end="translate-x-0"
+              x-transition:leave="transition ease-in duration-300 transform"
+              x-transition:leave-start="translate-x-0"
+              x-transition:leave-end="translate-x-full"
+              class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 mt-17"
+          >
+          
+              <div class="pointer-events-auto relative w-screen max-w-md">
+                  <div class="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
+                      <button @click="closePopup;" type="button" class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+                          <span class="absolute -inset-2.5"></span>
+                          <span class="sr-only">Close panel</span>
+                          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                      </button>
+                  </div>
+                  <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl mt-4">
+                      <div class="px-4 sm:px-6">
+                          <h2 class="text-lg font-semibold leading-6 text-gray-900" id="slide-over-title">Media Library</h2>
+                      </div>
+                      <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                         
+                        <div class="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-4 rounded-md" role="alert">
+
+                            <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z"/></svg>
+                            <p>Drop the image to upload your own.</p>
+                          </div>
+                          <br>
+                          <br>
+                          <template x-if="imageUrls.length === 0">
+                              <p class="text-gray-700">Loading images...</p>
+                          </template>
+                          <template x-if="imageUrls.length > 0">
+                              <div class="grid grid-cols-3 gap-4">
+                                  <template x-for="(imageUrl, index) in imageUrls" :key="index">
+                                      <img 
+                                          :src="imageUrl" 
+                                          :class="{ 'opacity-50 border-4 border-blue-500': selectedImages.includes(imageUrl) }" 
+                                          alt="Image" 
+                                          class="rounded-lg shadow-md cursor-pointer"
+                                          @click="toggleImageSelection(index)"
+                                          @dragstart="startDrag(index, $event)"
+                                          draggable="true"
+                                      >
+                                  </template>
+                              </div>
+                          </template>
+                      </div>
+                      <div class="px-4 sm:px-6 mt-4">
+                          <button type="button" @click="uploadImage;" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Insert</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+<!-- Settings Section  -->
+        <div 
+        x-show="isSettingsOpen"
+        @click.away="isSettingsOpen = false"
+        class="fixed inset-0 overflow-hidden z-50"
+    >
+        <div class="absolute inset-0 overflow-hidden">
+            <div 
+                x-show="isSettingsOpen"
+                x-transition:enter="transition ease-out duration-300 transform"
+                x-transition:enter-start="translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave="transition ease-in duration-300 transform"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="translate-x-full"
+                class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 mt-17"
+            >
+                <div class="pointer-events-auto relative w-screen max-w-md">
+                    <div class="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
+                        <button @click="isSettingsOpen = false" type="button" class="relative rounded-md text-gray-300 hover:text-gray focus:outline-none focus:ring-2 focus:ring-white">
+                            <span class="absolute -inset-2.5"></span>
+                            <span class="sr-only">Close panel</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl mt-4">
+                        
+                        <div class="px-4 sm:px-6">
+                          <h3 class="text-title-md">Settings</h3>
+                        </div>
+                        
+                       
+                        
+                        <div class="relative mt-6 flex-1 px-4 sm:px-6" x-data = "{status: '{{form.status.value}}' }" >
+                            
+                            <div class="mb-4">
+                                <label class="mb-2.5 block font-medium text-black dark:text-white">Status</label>
+                                <div class="relative">
+                                    <!-- {{ form.status }} -->
+
+
+                                    <select @change="status=event.target.value" class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary" name="status">
+                                        {% for value, text in form.status.field.choices %}
+                                        <option value="{{value}}" {% if form.status.value == value %} selected {% endif %}>{{text}}</option>
+                                    {% endfor %}
+                                   </select>
+                                    {% if form.status.error %}
+                                        <div class="absolute right-4 top-4 text-red-500">
+                                            <div class="text-danger">{{ form.status.errors }}</div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                           
+                            
+                            <div class="mb-4" x-show= "status == 'scheduled' " >
+                                <label class="mb-2.5 block font-medium text-black dark:text-white">Scheduled Time</label>
+                                <div class="relative">
+                                    <!-- {{ form.scheduled_time }} -->
+                                    <input type="datetime-local" id="{{ form.scheduled_time.id_for_label }}" name="{{ form.scheduled_time.html_name }}" value="{{ form.scheduled_time.value|date:'Y-m-d H:i' }}" class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary">
+                                    
+                                    {% if form.scheduled_time.errors %} 
+                                        <div class="absolute right-4 top-4 text-red-500">
+                                            <div class="text-danger">{{ form.scheduled_time.errors }}</div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mb-4" x-show= "status == 'protected' ">
+                                <label class="mb-2.5 block font-medium text-black dark:text-white">Password</label>
+                                <div class="relative">
+                                    {{ form.password }}
+                                    {% if form.password.errors %}
+                                        <div class="absolute right-4 top-4 text-red-500">
+                                            <div class="text-danger"> {{ form.password.errors }}</div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="mb-2.5 block font-medium text-black dark:text-white">Featured Image</label>
+                                <div class="relative">
+                                    {{ form.featured_image }}
+                                    {% if form.featured_image.errors %}
+                                        <div class="absolute right-4 top-4 text-red-500">
+                                            <div class="text-danger">{{ form.featured_image.errors }}</div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if form.non_field_errors %}
+                                <div class="mb-5">
+                                    {% for error in form.non_field_errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="mb-5 flex justify-end">
+                                <input type="submit" value="Save" class="px-4 py-2 rounded-lg border border-primary bg-primary font-medium text-white transition hover:bg-opacity-90 mr-4" name="save_settings"/>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+  </form>
+ 
+
+
+
+  <script>
+    
+    
+    function fetchImages() {
+        fetch('/files/get_images/')
+            .then(response => response.json())
+            .then(data => {
+                this.imageUrls = data.image_urls;
+            })
+            .catch(error => console.error('Error fetching images:', error));
+    }
+
+    function toggleImageSelection(index) {
+        const imageUrl = this.imageUrls[index];
+        const selectedIndex = this.selectedImages.indexOf(imageUrl);
+        if (selectedIndex === -1) { 
+            //  add selected images to the selected images array
+            this.selectedImages.push(imageUrl);
+        } else {
+            // remove selected images from the selected images array
+            this.selectedImages.splice(selectedIndex, 1);
+        }
+    }
+    function uploadImage() {
+        editor.execute('insertImage', { source: this.selectedImages });
+        console.log(editor) // inserts the selected images into the editor
+        this.closePopup();
+       
+    }
+    
+    function closePopup() {
+        this.isOpen = false;
+        this.resetSelectedImages();
+    }
+
+    function resetSelectedImages() {
+        this.selectedImages = [];
+    }
+
+    function startDrag(index, event) {
+        const imageUrl = this.imageUrls[index];
+        event.dataTransfer.setData('text/plain', imageUrl);
+    }
+
+
+    function handleDrop(event) {
+        var csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const uploadPercentageElement = document.getElementById('upload-percentage');
+        const progressBar = document.getElementById('progress-bar');
+        const self = this;
+        this.isUploading = true;
+        const progressHandler = (event) => {
+            if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                const uploadProgress = Math.round(percentComplete); 
+                uploadPercentageElement.innerText = `Uploading: ${uploadProgress}%`; 
+                progressBar.style.width = `${uploadProgress}%`; 
+               
+            }
+        };
+
+        const xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('progress', progressHandler);
+        xhr.addEventListener('load', () => {
+            uploadPercentageElement.innerText = 'Upload complete';
+           
+            this.isUploading = false;
+          
+            progressBar.style.display = 'none'; 
+        });
+        xhr.addEventListener('error', () => {
+            console.error('Error occurred during file upload');
+            uploadPercentageElement.innerText = 'Upload failed'; 
+        });
+
+        xhr.open('POST', '/files/upload_image/');
+        xhr.setRequestHeader('X-CSRFToken', csrfToken);
+        
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                console.log('Upload successful');
+                console.log(xhr.responseText);
+                const response = JSON.parse(xhr.responseText);
+                const imageUrl = response.url;
+                self.imageUrls.push(imageUrl);
+            } else {
+                console.error('Upload failed with status:', xhr.status);
+            }
+        };
+        
+        xhr.send(formData);
+    }
+
+
+
+
+</script>
+</div>
+
+
+
+
+
+
+
+
+
+
+  
+      
+{% endblock content %}

@@ -1,0 +1,32 @@
+
+   
+<form method="post" id="contactform"> 
+    {% csrf_token %} 
+    <input type="hidden" name="g-recaptcha-response" id="recaptcha">
+    <input  name="name" >
+   
+    <button type="submit">Submit</button> 
+</form> 
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+crossorigin="anonymous"></script>
+
+<script src="https://www.google.com/recaptcha/api.js?render=6Lck4OMpAAAAAEnr2uMYRN21bDXUqaUiRF28PbS9"></script>
+<script>
+  // 3
+  grecaptcha.ready(function() {
+      // 4
+      $('#contactform').submit(function(e){
+          var form = this;
+          // 5
+          e.preventDefault()
+          grecaptcha.execute('6Lck4OMpAAAAAEnr2uMYRN21bDXUqaUiRF28PbS9', {action: 'contactform'}).then(function(token) {
+              // 6
+              $('#recaptcha').val(token)
+              // 7
+              form.submit()
+          });
+      })
+
+  });
+ </script>

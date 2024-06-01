@@ -1,0 +1,48 @@
+{
+  "name": "Blog_AI",
+  "version": "",
+  "description": "",
+  "scripts": {
+    "dev": "tailwindcss -i static/src/css/style.css -o static/dist/style.css --watch && webpack --config webpack.config.js",
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.12",
+    "@babel/preset-env": "^7.16.11",
+    "autoprefixer": "^10.4.17",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-prismjs": "^2.1.0",
+    "css-loader": "^6.11.0",
+    "file-loader": "^6.2.0",
+    "glob": "^7.2.0",
+    "html-loader": "^3.1.0",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.5.3",
+    "postcss": "^8.4.35",
+    "postcss-loader": "^6.2.1",
+    "postcss-nesting": "^12.1.2",
+    "postcss-preset-env": "^7.2.3",
+    "prettier": "^2.8.4",
+    "prettier-plugin-tailwindcss": "^0.2.3",
+    "raw-loader": "^4.0.2",
+    "style-loader": "^3.3.4",
+    "tailwindcss": "^3.4.1",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.2"
+  },
+  "dependencies": {
+    "@alpinejs/persist": "^3.12.0",
+    "@ckeditor/ckeditor5-basic-styles": "^41.3.1",
+    "@ckeditor/ckeditor5-build-classic": "^41.3.1",
+    "@ckeditor/ckeditor5-dev-utils": "^39.6.3",
+    "@ckeditor/ckeditor5-essentials": "^41.3.1",
+    "@ckeditor/ckeditor5-image": "^41.3.1",
+    "@ckeditor/ckeditor5-paragraph": "^41.3.1",
+    "@ckeditor/ckeditor5-theme-lark": "^41.3.1",
+    "alpinejs": "^3.10.3",
+    "apexcharts": "^3.36.3",
+    "flatpickr": "^4.6.13",
+    "jsvectormap": "^1.5.1"
+  }
+}
