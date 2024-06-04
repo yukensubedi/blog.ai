@@ -57,7 +57,7 @@ genai.configure(api_key= getattr(settings, 'GOOGLE_API_KEY'))
 
 
 def test(request):   
-    template_name = 'assistant/captcha.html'
+    template_name = 'assistant/test.html'
     
     if request.method == 'POST':
         # todo 
