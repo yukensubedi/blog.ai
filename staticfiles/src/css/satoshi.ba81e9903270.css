@@ -1,0 +1,121 @@
+/**
+ * @license
+ *
+ * Font Family: Satoshi
+ * Designed by: Deni Anggara
+ * URL: https://www.fontshare.com/fonts/satoshi
+ * © 2023 Indian Type Foundry
+ *
+ * Font Styles:
+ * Satoshi Light
+ * Satoshi Light Italic
+ * Satoshi Regular
+ * Satoshi Italic
+ * Satoshi Medium
+ * Satoshi Medium Italic
+ * Satoshi Bold
+ * Satoshi Bold Italic
+ * Satoshi Black
+ * Satoshi Black Italic
+ *
+*/
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-Light.5481680cc24e.woff2") format("woff2"),
+    url("../fonts/Satoshi-Light.d27d9203eb87.woff") format("woff"),
+    url("../fonts/Satoshi-Light.02d43df8e0b9.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-LightItalic.e13da56de992.woff2") format("woff2"),
+    url("../fonts/Satoshi-LightItalic.584ec39d7f98.woff") format("woff"),
+    url("../fonts/Satoshi-LightItalic.055ba8c42d30.ttf") format("truetype");
+  font-weight: 300;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-Regular.71a6023c087c.woff2") format("woff2"),
+    url("../fonts/Satoshi-Regular.3adf562e446a.woff") format("woff"),
+    url("../fonts/Satoshi-Regular.4da5359f3f97.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-Italic.7e048c3007f8.woff2") format("woff2"),
+    url("../fonts/Satoshi-Italic.993e96e16010.woff") format("woff"),
+    url("../fonts/Satoshi-Italic.002093bee822.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-Medium.cd790237ed63.woff2") format("woff2"),
+    url("../fonts/Satoshi-Medium.3f3ea9424062.woff") format("woff"),
+    url("../fonts/Satoshi-Medium.7bec814954d0.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-MediumItalic.3d53a7c37f55.woff2") format("woff2"),
+    url("../fonts/Satoshi-MediumItalic.6b31d6079681.woff") format("woff"),
+    url("../fonts/Satoshi-MediumItalic.d7e82ee45e48.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-Bold.d4db658f4dd6.woff2") format("woff2"),
+    url("../fonts/Satoshi-Bold.fc3b9a8724a4.woff") format("woff"),
+    url("../fonts/Satoshi-Bold.50eee48d495a.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-BoldItalic.e66ffbf8f9e8.woff2") format("woff2"),
+    url("../fonts/Satoshi-BoldItalic.255104eefaeb.woff") format("woff"),
+    url("../fonts/Satoshi-BoldItalic.cbbadbeec849.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-Black.d9749ed5ed84.woff2") format("woff2"),
+    url("../fonts/Satoshi-Black.8f3e2ffe218c.woff") format("woff"),
+    url("../fonts/Satoshi-Black.f12126e8a8e5.ttf") format("truetype");
+  font-weight: 900;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("../fonts/Satoshi-BlackItalic.d28fa4c086f1.woff2") format("woff2"),
+    url("../fonts/Satoshi-BlackItalic.658c3f8c228e.woff") format("woff"),
+    url("../fonts/Satoshi-BlackItalic.bdec661cb56d.ttf") format("truetype");
+  font-weight: 900;
+  font-display: swap;
+  font-style: italic;
+}
