@@ -43,7 +43,7 @@ from filemanager.models import *
 
 from .shortcodes import process_shortcodes
 
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
+client = OpenAI(api_key=getattr(settings, 'OPENAI_API_KEY'))
 DEFAULT_GENERATION_CONFIG = {
   "temperature": 0.9,
   "top_p": 1,
@@ -58,7 +58,7 @@ genai.configure(api_key= getattr(settings, 'GOOGLE_API_KEY'))
 
 def test(request):   
     template_name = 'assistant/test.html'
-    
+    print(getattr(settings, 'OPENAI_API_KEY'))
     if request.method == 'POST':
         # todo 
         # yo kura lai contact form ma lane 
@@ -571,6 +571,7 @@ class HistoryDetailView(LoginRequiredMixin, DetailView):
         # print(his.title)
         if request.method == 'POST':
             id = request.POST.get('id')
+             
             history = History.objects.get(id = id)
             print(history.id)
             generation_config = DEFAULT_GENERATION_CONFIG 
