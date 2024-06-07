@@ -52,7 +52,7 @@ class Topics(BaseModel):
 
 class BlogSection(BaseModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE )
-    title = models.CharField(max_length = 1024, blank = True, null = True)
+    title = models.CharField(max_length = 2000, blank = True, null = True)
     slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
@@ -83,8 +83,8 @@ class BlogSection(BaseModel):
 class History(BaseModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE )
     title = models.ForeignKey(BlogSection, on_delete=models.CASCADE, null = True, blank = True) 
-    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
-    prompt = models.CharField(max_length=255, null=True, blank=True)
+    slug = models.SlugField(max_length=1000, unique=True, blank=True, null=True)
+    prompt = models.CharField(max_length=3000, null=True, blank=True)
    
     section = CKEditor5Field('section', config_name='extends', null=True, blank=True, default=None)
     body = CKEditor5Field('body', config_name='extends',null = True, blank = True)

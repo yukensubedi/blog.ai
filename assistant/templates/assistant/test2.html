@@ -46,7 +46,7 @@
                 {% for date, blogs in blogs_grouped_by_date.items %}
                 <h2 class="text-sm font-bold mb-4">{{ date |  naturalday | title}}</h2>
                 {% for blog in blogs %}
-                <a href="{% url 'details' blog.id %}" class="block">
+                <a href="{% url 'details' blog.pk %}" class="block">
                     <li class="mb-2">{{ blog.title | get_first_four_words}}</li>
                 </a>
                 {% empty %}

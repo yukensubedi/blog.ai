@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os 
 import dj_database_url
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv()
+
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,10 +24,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = config('SECRET_KEY')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+DEBUG = config('DEBUG', cast=bool)
 ALLOWED_HOSTS = ['*']
 
 SITE_ID = 1
@@ -114,12 +115,12 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'NAME':  os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
 
 DATABASES = {
-    'default' : dj_database_url.parse(os.getenv('DATABASE_URL'))
+    'default' : dj_database_url.parse(config('DATABASE_URL'))
 }
 
 # Password validation
@@ -387,17 +388,16 @@ ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = ACCOUNT_PASSWORD_RESET_REDIR
 SOCIAL_AUTH_LOGIN_ERROR_URL = LOGIN_URL
 
 # email credentials
-EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587)) 
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
+GOOGLE_API_KEY = config('GOOGLE_API_KEY')
+OPENAI_API_KEY = config('OPENAI_API_KEY')
 # Celery settings
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_SERIALIZER = 'json'
