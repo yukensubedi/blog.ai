@@ -37,16 +37,19 @@ SITE_ID = 1
 
 INSTALLED_APPS = [
     
+  
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
     'django.contrib.sites',
     "django.contrib.humanize",
     'simple_history',
     'django_ckeditor_5',
+
 
     'django_recaptcha',
     
@@ -160,10 +163,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'static/dist'),
 ]
-
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 
 
 MEDIA_URL = '/media/'
